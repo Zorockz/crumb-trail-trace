@@ -49,7 +49,7 @@ export const SearchForm = ({ onSearch }: SearchFormProps) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-6 pb-12">
+    <div className="w-full max-w-4xl mx-auto px-6 pb-12">
       <Card className="card-cyber p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold font-mono mb-2">

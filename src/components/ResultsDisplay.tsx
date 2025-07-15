@@ -46,6 +46,24 @@ export const ResultsDisplay = ({ results, query, onNewSearch }: ResultsDisplayPr
     return 'text-green-400';
   };
 
+  const getPlatformUrl = (platformName: string) => {
+    const platformUrls: { [key: string]: string } = {
+      'GitHub': 'https://github.com',
+      'LinkedIn': 'https://linkedin.com',
+      'Twitter': 'https://twitter.com',
+      'Reddit': 'https://reddit.com',
+      'Instagram': 'https://instagram.com',
+      'TikTok': 'https://tiktok.com',
+      'Facebook': 'https://facebook.com',
+      'YouTube': 'https://youtube.com',
+      'Twitch': 'https://twitch.tv',
+      'Discord': 'https://discord.com',
+      'Snapchat': 'https://snapchat.com',
+      'Pinterest': 'https://pinterest.com'
+    };
+    return platformUrls[platformName] || `https://google.com/search?q=${platformName}`;
+  };
+
   const handleShare = () => {
     const shareText = `Trace Score: ${results.digitalProfile.traceScore}/100. Found on ${results.platforms.length} platforms. ${results.breaches.length} breaches detected. Check your digital footprint at Trace.Me`;
     
@@ -215,7 +233,12 @@ export const ResultsDisplay = ({ results, query, onNewSearch }: ResultsDisplayPr
                       </div>
                       <div className="flex items-center space-x-2">
                         <Progress value={platform.confidence} className="w-16" />
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => window.open(getPlatformUrl(platform.name), '_blank')}
+                          className="hover:bg-primary/20"
+                        >
                           <ExternalLink className="w-4 h-4" />
                         </Button>
                       </div>

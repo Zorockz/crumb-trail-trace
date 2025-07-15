@@ -14,7 +14,7 @@ export const HeroSection = () => {
       </div>
 
       {/* Hero content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
+      <div className="relative z-10 text-center w-full px-6">
         {/* Logo/Brand */}
         <div className="flex items-center justify-center mb-6">
           <div className="relative">
