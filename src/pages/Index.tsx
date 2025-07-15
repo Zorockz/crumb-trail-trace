@@ -38,6 +38,150 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
+  const generateMockResults = (query: string, queryType: 'email' | 'username' | 'name'): SearchResult => {
+    // Generate hash from query for consistent results
+    const hash = query.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    const platforms = [
+      'GitHub', 'LinkedIn', 'Twitter', 'Reddit', 'Instagram', 'TikTok', 'Facebook',
+      'YouTube', 'Twitch', 'Discord', 'Snapchat', 'Pinterest', 'Tumblr', 'Medium',
+      'Stack Overflow', 'Behance', 'Dribbble', 'DeviantArt', 'Flickr', 'Vimeo'
+    ];
+    
+    const breachSources = [
+      'LinkedIn', 'Adobe', 'Equifax', 'Yahoo', 'Facebook', 'Twitter', 'Dropbox',
+      'Uber', 'Marriott', 'Capital One', 'T-Mobile', 'Anthem', 'Target', 'Home Depot',
+      'eBay', 'Sony', 'Heartland', 'TJX', 'Canva', 'Zoom', 'Clubhouse', 'Parler'
+    ];
+    
+    // Generate platforms based on query
+    const numPlatforms = Math.abs(hash % 6) + 3; // 3-8 platforms
+    const selectedPlatforms = platforms
+      .sort(() => 0.5 - Math.random())
+      .slice(0, numPlatforms)
+      .map((platform, index) => {
+        const confidence = Math.abs((hash + index) % 30) + 60; // 60-90 confidence
+        const risks = ['low', 'medium', 'high'] as const;
+        const risk = risks[Math.abs(hash + index) % 3];
+        
+        const snippets = {
+          'GitHub': ['Active developer', 'Open source contributor', 'Private repos visible', 'Frequent commits'],
+          'LinkedIn': ['Professional profile', 'Work history visible', 'Network of 500+ contacts', 'Job seeker'],
+          'Twitter': ['Public tweets', 'Political opinions shared', 'Personal photos posted', 'Location tagged'],
+          'Reddit': ['Comment history', 'Subreddit activity', 'Personal stories shared', 'Controversial posts'],
+          'Instagram': ['Photo timeline', 'Story highlights', 'Tagged locations', 'Friend connections'],
+          'TikTok': ['Video content', 'Viral posts', 'Dance videos', 'Comedy skits'],
+          'Facebook': ['Family photos', 'Life events', 'Check-ins', 'Political posts'],
+          'YouTube': ['Video uploads', 'Comment activity', 'Subscription list', 'Playlist public'],
+          'Twitch': ['Stream schedule', 'Chat history', 'Donation records', 'Gaming stats'],
+          'Discord': ['Server activity', 'Voice chat logs', 'Gaming groups', 'Message history'],
+          'Snapchat': ['Story posts', 'Snap map', 'Friend activity', 'Bitmoji usage'],
+          'Pinterest': ['Board collections', 'Pin activity', 'Interest data', 'Shopping behavior'],
+          'Tumblr': ['Blog posts', 'Reblog activity', 'Tag usage', 'Anonymous asks'],
+          'Medium': ['Article publications', 'Reading history', 'Clap activity', 'Follow network'],
+          'Stack Overflow': ['Question history', 'Answer contributions', 'Reputation score', 'Code examples'],
+          'Behance': ['Creative portfolio', 'Project showcase', 'Client work', 'Design trends'],
+          'Dribbble': ['Design shots', 'Work progress', 'Community likes', 'Skill showcase'],
+          'DeviantArt': ['Artwork gallery', 'Favorite collections', 'Journal entries', 'Group memberships'],
+          'Flickr': ['Photo albums', 'Camera metadata', 'Location data', 'Creative commons'],
+          'Vimeo': ['Video portfolio', 'Creative projects', 'Professional work', 'Privacy settings']
+        };
+        
+        const lastActiveOptions = ['2 hours ago', '1 day ago', '3 days ago', '1 week ago', '2 weeks ago', '1 month ago'];
+        
+        return {
+          name: platform,
+          confidence,
+          snippet: snippets[platform as keyof typeof snippets]?.[Math.abs(hash + index) % 4] || 'Profile activity detected',
+          lastActive: lastActiveOptions[Math.abs(hash + index) % lastActiveOptions.length],
+          risk
+        };
+      });
+    
+    // Generate breaches
+    const numBreaches = Math.abs(hash % 4); // 0-3 breaches
+    const selectedBreaches = breachSources
+      .sort(() => 0.5 - Math.random())
+      .slice(0, numBreaches)
+      .map((source, index) => {
+        const dataTypes = ['Email', 'Password', 'Full Name', 'Phone Number', 'Address', 'Date of Birth', 'Social Security', 'Credit Card', 'IP Address', 'Username', 'Profile Photo', 'Messages'];
+        const numDataTypes = Math.abs((hash + index) % 4) + 2; // 2-5 data types
+        const selectedData = dataTypes.sort(() => 0.5 - Math.random()).slice(0, numDataTypes);
+        
+        const severities = ['low', 'medium', 'high'] as const;
+        const severity = severities[Math.abs(hash + index) % 3];
+        
+        const dates = [
+          '2023-12-15', '2023-08-22', '2023-03-10', '2022-11-05', '2022-07-18',
+          '2022-02-14', '2021-09-30', '2021-06-12', '2021-01-25', '2020-10-08',
+          '2020-05-20', '2019-12-03', '2019-08-15', '2019-04-28', '2018-11-10'
+        ];
+        
+        return {
+          source,
+          date: dates[Math.abs(hash + index) % dates.length],
+          data: selectedData,
+          severity
+        };
+      });
+    
+    // Generate profile based on query type and content
+    const ageRanges = ['18-25', '25-35', '35-45', '45-55', '55-65', '65+'];
+    const ageRange = ageRanges[Math.abs(hash) % ageRanges.length];
+    
+    const firstTraceYears = ['2008', '2010', '2012', '2014', '2015', '2016', '2017', '2018', '2019', '2020'];
+    const firstTraceYear = firstTraceYears[Math.abs(hash) % firstTraceYears.length];
+    const firstTracePlatforms = ['MySpace', 'Facebook', 'Twitter', 'LinkedIn', 'GitHub', 'Reddit', 'Instagram', 'YouTube'];
+    const firstTracePlatform = firstTracePlatforms[Math.abs(hash) % firstTracePlatforms.length];
+    
+    const personas = [
+      'Tech-savvy developer', 'Social media enthusiast', 'Privacy-conscious user', 'Content creator',
+      'Gaming enthusiast', 'Professional networker', 'Digital nomad', 'Entrepreneur',
+      'Artist/Creative', 'Student/Academic', 'Fitness enthusiast', 'Travel blogger',
+      'Business professional', 'Freelancer', 'Activist', 'Minimalist online presence'
+    ];
+    const persona = personas[Math.abs(hash) % personas.length];
+    
+    // Calculate trace score based on number of platforms and breaches
+    const baseScore = 30 + (selectedPlatforms.length * 8) + (selectedBreaches.length * 10);
+    const traceScore = Math.min(Math.max(baseScore, 20), 95);
+    
+    // Generate network connections
+    const connections = selectedPlatforms.slice(0, Math.min(3, selectedPlatforms.length)).map((platform, index) => {
+      const connectionTypes = [
+        'Same username across platforms',
+        'Linked in bio',
+        'Cross-posted content',
+        'Similar posting patterns',
+        'Shared contact information',
+        'Friend/follower overlap',
+        'Same profile photo',
+        'Connected email addresses'
+      ];
+      
+      return {
+        platform: platform.name,
+        connectedTo: connectionTypes[Math.abs(hash + index) % connectionTypes.length],
+        confidence: Math.abs((hash + index) % 25) + 65 // 65-90 confidence
+      };
+    });
+    
+    return {
+      digitalProfile: {
+        ageRange,
+        firstTrace: `Found you on ${firstTracePlatform} in ${firstTraceYear}`,
+        persona,
+        traceScore
+      },
+      platforms: selectedPlatforms,
+      breaches: selectedBreaches,
+      networkConnections: connections
+    };
+  };
+
   const handleSearch = async (query: string, queryType: 'email' | 'username' | 'name') => {
     setIsSearching(true);
     setSearchQuery(query);
@@ -46,72 +190,7 @@ const Index = () => {
       // Simulate API call with realistic delay
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Mock results for demonstration
-      const mockResults: SearchResult = {
-        digitalProfile: {
-          ageRange: '25-35',
-          firstTrace: 'Found you on GitHub in 2015',
-          persona: 'Tech-savvy, privacy-conscious developer',
-          traceScore: Math.floor(Math.random() * 40) + 40, // 40-80 range
-        },
-        platforms: [
-          {
-            name: 'GitHub',
-            confidence: 95,
-            snippet: 'Active developer, 47 repositories',
-            lastActive: '2 days ago',
-            risk: 'low'
-          },
-          {
-            name: 'LinkedIn',
-            confidence: 88,
-            snippet: 'Software Engineer at TechCorp',
-            lastActive: '1 week ago',
-            risk: 'medium'
-          },
-          {
-            name: 'Twitter',
-            confidence: 76,
-            snippet: 'Occasional tech tweets, 245 followers',
-            lastActive: '3 days ago',
-            risk: 'medium'
-          },
-          {
-            name: 'Reddit',
-            confidence: 64,
-            snippet: 'Active in r/programming, r/cybersecurity',
-            lastActive: '5 hours ago',
-            risk: 'high'
-          }
-        ],
-        breaches: [
-          {
-            source: 'LinkedIn',
-            date: '2021-04-01',
-            data: ['Email', 'Hashed Password', 'Full Name'],
-            severity: 'high'
-          },
-          {
-            source: 'Adobe',
-            date: '2013-10-01',
-            data: ['Email', 'Encrypted Password'],
-            severity: 'medium'
-          }
-        ],
-        networkConnections: [
-          {
-            platform: 'GitHub',
-            connectedTo: 'LinkedIn profile',
-            confidence: 92
-          },
-          {
-            platform: 'Twitter',
-            connectedTo: 'Same bio as GitHub',
-            confidence: 78
-          }
-        ]
-      };
-      
+      const mockResults = generateMockResults(query, queryType);
       setSearchResults(mockResults);
       
       toast({
